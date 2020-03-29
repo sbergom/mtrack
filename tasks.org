@@ -1,0 +1,12 @@
+* TODO Initialize Git
+* TODO Make build system
+* TODO Make UI layout
+* TODO Hook layout together
+* TODO Read/Write data to file
+  table metadata ( key, value)
+  -- schema.version, 1
+  -- schema.app, mtrack
+  table list ( id, title, viewing_notes, date_viewed, comments )
+* TODO Make Docker build
+  Fedora
+  Debian
