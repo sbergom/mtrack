@@ -15,5 +15,5 @@ QT += widgets
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 # Input
-SOURCES += main.cpp tracker.cpp filter.cpp entry.cpp
-HEADERS += filter.h entry.h
+SOURCES += main.cpp tracker.cpp filter.cpp entry.cpp window.cpp
+HEADERS += filter.h entry.h window.h
