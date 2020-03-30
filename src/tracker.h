@@ -1,3 +1,6 @@
+#ifndef TRACKER_H
+#define TRACKER_H
+
 #include <QList>
 #include <QString>
 #include <QDate>
@@ -63,3 +66,5 @@ public:
 private:
   QString lastError;
 };
+
+#endif // TRACKER_H

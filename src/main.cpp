@@ -9,8 +9,10 @@
 #include <QMenuBar>
 #include <QPushButton>
 #include <QMenu>
+#include "filter.h"
+#include "entry.h"
 
-QMenuBar* buildMainMenu()
+QMenuBar* buildMainMenu(TrackerFilter *filter)
 {
   QMenuBar *bar = new QMenuBar;
   QMenu *fileMenu = bar->addMenu("&File");
@@ -32,54 +34,18 @@ QMenuBar* buildMainMenu()
   return bar;
 }
 
-QLayout* buildSearchPane()
-{
-  QVBoxLayout *layout = new QVBoxLayout;
-  QLineEdit *filterBox = new QLineEdit;
-  QWidget *filterResults = new QLineEdit; // TODO replace
-
-  layout->addWidget(filterBox);
-  layout->addWidget(filterResults);
-
-  // TODO align to top
-  // TODO connect filterBox and filterResults
-
-  return layout;
-}
-
-QLayout* buildEntryPane()
-{
-  QVBoxLayout *layout = new QVBoxLayout;
-  QFormLayout *form = new QFormLayout;
-  QHBoxLayout *buttons = new QHBoxLayout;
-
-  form->addRow("Title", new QLineEdit());
-  form->addRow("Notes", new QLineEdit());
-  form->addRow("Date", new QDateEdit()); // TODO Initialize to today
-  form->addRow("Comments", new QTextEdit());
-
-  QPushButton *saveButton = new QPushButton("Save");
-  QPushButton *cancelButton = new QPushButton("Cancel");
-  buttons->addWidget(cancelButton);
-  buttons->addWidget(saveButton);
-
-  // TODO connect all buttons
-
-  layout->addLayout(form);
-  layout->addLayout(buttons);
-  
-  return layout;
-}
-
 QLayout* buildLayout()
 {
   QVBoxLayout *wholeLayout = new QVBoxLayout;
   QHBoxLayout *field = new QHBoxLayout;
 
-  field->addLayout(buildSearchPane());
-  field->addLayout(buildEntryPane());
+  EntryField *entry = new EntryField();
+  TrackerFilter *filter = new TrackerFilter(entry);
 
-  wholeLayout->addWidget(buildMainMenu());
+  field->addWidget(filter);
+  field->addWidget(entry);
+
+  wholeLayout->addWidget(buildMainMenu(filter));
   wholeLayout->addLayout(field);
   
   // TODO connect panes together
