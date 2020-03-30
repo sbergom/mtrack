@@ -8,6 +8,8 @@ TrackerFilter::TrackerFilter(EntryField *entry, QWidget *parent)
   filterBox = new QLineEdit;
   filterResults = new QListWidget;
   filterResults->setSelectionMode(QAbstractItemView::SingleSelection);
+  // TODO onselect(filterResults) open in entry
+  // TODO onchange(filterBox) change filterResults
 
   layout->addWidget(filterBox);
   layout->addWidget(filterResults);

@@ -11,7 +11,7 @@ EntryField::EntryField(QWidget *parent)
 
   title = new QLineEdit;
   notes = new QLineEdit;
-  date = new QDateEdit;
+  date = new QLineEdit;
   comments = new QTextEdit;
 
   form->addRow("Title", title);
@@ -19,13 +19,16 @@ EntryField::EntryField(QWidget *parent)
   form->addRow("Date", date);
   form->addRow("Comments", comments);
 
+  newButton = new QPushButton("New");
+  // TODO onclick clear filterReults.select, create new TrackedEntry, update this
   saveButton = new QPushButton("Save");
+  // TODO onclick trackedEntry.save()
   cancelButton = new QPushButton("Cancel");
+  // TODO onclick revert trackedEntry
+  buttons->addWidget(newButton);
   buttons->addWidget(cancelButton);
   buttons->addWidget(saveButton);
   // TODO align right
-
-  // TODO connect all buttons
 
   layout->addLayout(form);
   layout->addLayout(buttons);

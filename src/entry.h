@@ -19,8 +19,9 @@ public:
 private:
   QLineEdit *title;
   QLineEdit *notes;
-  QDateEdit *date;
+  QLineEdit *date;
   QTextEdit *comments;
+  QPushButton *newButton;
   QPushButton *saveButton;
   QPushButton *cancelButton;
   TrackedEntry *entry;

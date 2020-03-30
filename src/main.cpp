@@ -20,16 +20,19 @@ QMenuBar* buildMainMenu(TrackerFilter *filter)
 
   // TODO add menu
   fileMenu->addAction("&New");
+  // TODO action close any open files, create new one
   fileMenu->addAction("&Open");
+  // TODO action file selector, if success, close files and open new
   //fileMenu->addSeparator();
   // TODO recent files
   fileMenu->addSeparator();
   fileMenu->addAction("E&xit");
+  // TODO action modal save, close files and exit
 
   helpMenu->addAction("Help");
+  // TODO action modal dialog "Figure it out yourself!"
   helpMenu->addAction("About");
-
-  // TODO link all actions
+  // TODO action modal about dialog
 
   return bar;
 }
@@ -48,7 +51,6 @@ QLayout* buildLayout()
   wholeLayout->addWidget(buildMainMenu(filter));
   wholeLayout->addLayout(field);
   
-  // TODO connect panes together
   // TODO line between the panes?
   // TODO save on close
 
