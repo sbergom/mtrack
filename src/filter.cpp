@@ -22,16 +22,28 @@ TrackerFilter::TrackerFilter(EntryField *entry, QWidget *parent)
   QVBoxLayout *layout = new QVBoxLayout;
 
   filterBox = new QLineEdit;
-  filterResults = new QListWidget;
+  filterResults = new QListView;
   filterResults->setSelectionMode(QAbstractItemView::SingleSelection);
-  // TODO onselect(filterResults) open in entry
-  // TODO onchange(filterBox) change filterResults
+
+  connect(filterResults, SIGNAL(clicked(const QModelIndex&)),
+          this, SLOT(selectResult(const QModelIndex&)));
+  connect(filterBox, SIGNAL(textChanged(const QString&)),
+          this, SLOT(refilterResults(const QString&)));
 
   layout->addWidget(filterBox);
   layout->addWidget(filterResults);
 
   // TODO align to top
-  // TODO connect filterBox and filterResults
 
   this->setLayout(layout);
+}
+
+void TrackerFilter::refilterResults(const QString &text)
+{
+  // TODO
+}
+
+void TrackerFilter::selectResult(const QModelIndex&)
+{
+  // TODO
 }

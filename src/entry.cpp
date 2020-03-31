@@ -38,9 +38,13 @@ EntryField::EntryField(QWidget *parent)
   newButton = new QPushButton("New");
   // TODO onclick clear filterReults.select, create new TrackedEntry, update this
   saveButton = new QPushButton("Save");
-  // TODO onclick trackedEntry.save()
+  connect(saveButton, SIGNAL(clicked()), this, SLOT(saveTrackedEntry()));
+
   cancelButton = new QPushButton("Cancel");
-  // TODO onclick revert trackedEntry
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelTrackedEntry()));
+
+  // TODO disable buttons until data has changed
+
   buttons->addWidget(newButton);
   buttons->addWidget(cancelButton);
   buttons->addWidget(saveButton);
@@ -50,4 +54,36 @@ EntryField::EntryField(QWidget *parent)
   layout->addLayout(buttons);
 
   this->setLayout(layout);
+}
+
+void EntryField::setTrackedEntry(TrackedEntry *entry)
+{
+  if (this->entry)
+  {
+    this->entry->cancelEntry();
+  }
+
+  this->entry = entry;
+  title->setText(entry->getName());
+  notes->setText(entry->getNote());
+  date->setText(entry->getDate().toString());
+  comments->setText(entry->getComment());
+}
+
+void EntryField::saveTrackedEntry()
+{
+  // TODO can we assume entry is not null?
+  entry->setName(title->text());
+  entry->setNote(notes->text());
+  entry->setDate(QDate::fromString(date->text()));
+  entry->setComment(comments->toPlainText());
+}
+
+void EntryField::cancelTrackedEntry()
+{
+  // TODO can we assume entry is not null?
+  title->setText(entry->getName());
+  notes->setText(entry->getNote());
+  date->setText(entry->getDate().toString());
+  comments->setText(entry->getComment());
 }

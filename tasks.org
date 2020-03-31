@@ -1,6 +1,6 @@
-* TODO Initialize Git
+* DONE Initialize Git
 * TODO Make build system
-* TODO Make UI layout
+* DONE Make UI layout
 * TODO Hook layout together
 * TODO Read/Write data to file
   table metadata ( key, value)

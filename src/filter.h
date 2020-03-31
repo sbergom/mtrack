@@ -32,12 +32,13 @@ public:
 
 private:
   QLineEdit *filterBox;
-  QListWidget *filterResults;
+  QListView *filterResults;
 
 signals:
 
 public slots:
-
+  void refilterResults(const QString &text);
+  void selectResult(const QModelIndex&);
 };
 
 #endif // FILTER_H

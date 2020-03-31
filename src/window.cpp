@@ -20,6 +20,7 @@
 #include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
+#include <QMessageBox>
 
 #include "window.h"
 
@@ -50,20 +51,58 @@ void TrackerWindow::buildMainMenu()
   QMenu *helpMenu = menuBar()->addMenu("&Help");
   QAction *qa;
 
-  fileMenu->addAction("&New")->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
-  // TODO action close any open files, create new one
-  fileMenu->addAction("&Open")->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
-  // TODO action file selector, if success, close files and open new
+  qa = fileMenu->addAction("&New");
+  qa->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
+  connect(qa, SIGNAL(triggered()), this, SLOT(newTracker()));
+
+  qa = fileMenu->addAction("&Open");
+  qa->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
+  connect(qa, SIGNAL(triggered()), this, SLOT(loadTracker()));
+
   //fileMenu->addSeparator();
   // TODO recent files
+
   fileMenu->addSeparator();
+
   qa = fileMenu->addAction("E&xit");
   qa->setShortcuts(QKeySequence::Quit);
-  connect(qa, &QAction::triggered, this, &QApplication::quit);
-  // TODO action modal save, close files and exit
+  connect(qa, SIGNAL(triggered()), this, SLOT(exitApplication()));
 
-  helpMenu->addAction("Help")->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
-  // TODO action modal dialog "Figure it out yourself!"
-  helpMenu->addAction("About");
-  // TODO action modal about dialog
+  qa = helpMenu->addAction("Help");
+  qa->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
+  connect(qa, SIGNAL(triggered()), this, SLOT(helpTracker()));
+
+  qa = helpMenu->addAction("About");
+  connect(qa, SIGNAL(triggered()), this, SLOT(aboutTracker()));
+}
+
+void TrackerWindow::exitApplication()
+{
+  // TODO action modal save, close files and exit 
+  qApp->quit();
+}
+
+void TrackerWindow::newTracker()
+{
+  // TODO action close any open files, create new one
+}
+
+void TrackerWindow::loadTracker()
+{
+  // TODO action file selector, if success, close files and open new
+}
+
+void TrackerWindow::aboutTracker()
+{
+  QMessageBox::about(this,
+                     "About",
+                     "Movie List Tracker\n"
+                     "Copyright 2020 Steven Bergom");
+}
+
+void TrackerWindow::helpTracker()
+{
+  QMessageBox::information(this,
+                           "You need help?",
+                           "Figure it out yourself!");
 }

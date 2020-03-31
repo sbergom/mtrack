@@ -36,7 +36,11 @@ private:
 signals:
 
 public slots:
-
+  void exitApplication();
+  void newTracker();
+  void loadTracker();
+  void aboutTracker();
+  void helpTracker();
 };
 
 #endif // WINDOW_H

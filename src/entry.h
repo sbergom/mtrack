@@ -32,6 +32,8 @@ class EntryField : public QWidget
 public:
   explicit EntryField(QWidget *parent = nullptr);
 
+  void setTrackedEntry(TrackedEntry *entry);
+
 private:
   QLineEdit *title;
   QLineEdit *notes;
@@ -45,6 +47,8 @@ private:
 signals:
 
 public slots:
+  void saveTrackedEntry();
+  void cancelTrackedEntry();
 
 };
 
