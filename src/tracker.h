@@ -97,6 +97,7 @@ public:
   bool updateSchema();
   QString getMetaData(QString property);
 
+  bool hasError() { return isInError; }
   QString getLastError() { return lastError; }
 
   friend class TrackedEntry;

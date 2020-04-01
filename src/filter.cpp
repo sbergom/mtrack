@@ -15,9 +15,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include <QVBoxLayout>
+#include <QAbstractItemModel>
+#include <QSqlTableModel>
+#include <QSqlRecord>
+#include <QDebug>
 #include "filter.h"
 
-TrackerFilter::TrackerFilter(EntryField *entry, QWidget *parent)
+TrackerFilter::TrackerFilter(EntryField *entry, QWidget *parent) : QWidget(parent)
 {
   QVBoxLayout *layout = new QVBoxLayout;
 
@@ -36,14 +40,37 @@ TrackerFilter::TrackerFilter(EntryField *entry, QWidget *parent)
   // TODO align to top
 
   this->setLayout(layout);
+  fieldEditor = entry;
+}
+
+void TrackerFilter::setTracker(Tracker *newTracker)
+{
+  closeTracker();
+
+  tracker = newTracker;
+  refilterResults("");
+}
+
+void TrackerFilter::closeTracker()
+{
+  if (tracker)
+  {
+    // TODO also need to retrieve entry->trackedEntry
+    tracker->close();
+  }
 }
 
 void TrackerFilter::refilterResults(const QString &text)
 {
-  // TODO
+  filterResults->setModel(tracker->getEntries(text));
+  filterResults->setModelColumn(1);
 }
 
-void TrackerFilter::selectResult(const QModelIndex&)
+void TrackerFilter::selectResult(const QModelIndex& index)
 {
-  // TODO
+  // TODO do we need to do this casting stuff?
+  const QAbstractItemModel *model = index.model();
+  const QSqlTableModel *table = dynamic_cast<const QSqlTableModel*>(model);
+  QSqlRecord r = table->record(index.row());
+  fieldEditor->setTrackedEntry(tracker->getEntry(r.value(0).toString()));
 }

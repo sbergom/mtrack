@@ -30,9 +30,15 @@ class TrackerFilter : public QWidget
 public:
   explicit TrackerFilter(EntryField *entry, QWidget *parent = nullptr);
 
+  void setTracker(Tracker *newTracker);
+  void closeTracker();
+
 private:
   QLineEdit *filterBox;
   QListView *filterResults;
+  Tracker   *tracker;
+
+  EntryField *fieldEditor;
 
 signals:
 

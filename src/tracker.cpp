@@ -79,6 +79,7 @@ void TrackedEntry::saveEntry()
     owner->updateEntry.addBindValue(id);
     owner->updateEntry.exec();
     // TODO check success
+    qDebug() << owner->db_conn.lastError().text();
   }
 }
 
@@ -168,7 +169,7 @@ Tracker::Tracker(QString filename)
   entries->setTable("tracked_list");
 
   insertEntry = QSqlQuery("insert into tracked_list (title, viewing_notes, date_viewed, comments) values (?, ?, ?, ?)", db_conn);
-  updateEntry = QSqlQuery("update tracked_list set (?, ?, ?, ?) where id = ?", db_conn);
+  updateEntry = QSqlQuery("update tracked_list set title = ?, viewing_notes = ?, date_viewed = ?, comments = ? where id = ?", db_conn);
   selectEntry = QSqlQuery("select * from tracked_list where id = ?", db_conn);
 }
 
@@ -190,7 +191,8 @@ QSqlTableModel* Tracker::getEntries(QString filter)
   if (!isInError)
   {
     // TODO the filter argument needs to be cleaned of '
-    entries->setFilter("title like '" + filter + "'");
+    entries->setFilter("title like '%" + filter + "%'");
+    //entries->setSort(1);
     entries->select();
     return entries;
   }

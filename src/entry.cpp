@@ -79,6 +79,8 @@ void EntryField::saveTrackedEntry()
   //entry->setDate(QDate::fromString(date->text()));
   entry->setDate(date->text());
   entry->setComment(comments->toPlainText());
+
+  entry->saveEntry();
 }
 
 void EntryField::cancelTrackedEntry()

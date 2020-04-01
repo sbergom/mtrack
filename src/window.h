@@ -18,6 +18,7 @@
 #define WINDOW_H
 
 #include <QMainWindow>
+#include <QWidget>
 #include "entry.h"
 #include "filter.h"
 
@@ -25,7 +26,7 @@ class TrackerWindow : public QMainWindow
 {
   Q_OBJECT;
 public:
-  explicit TrackerWindow();
+  explicit TrackerWindow(QWidget *parent = nullptr);
   
 private:
   EntryField *entry;

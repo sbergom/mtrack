@@ -21,10 +21,11 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QFileDialog>
 
 #include "window.h"
 
-TrackerWindow::TrackerWindow()
+TrackerWindow::TrackerWindow(QWidget *parent) : QMainWindow(parent)
 {
   setWindowTitle("Movie Tracker");
   resize(650, 400);
@@ -78,26 +79,67 @@ void TrackerWindow::buildMainMenu()
 
 void TrackerWindow::exitApplication()
 {
-  // TODO action modal save, close files and exit 
+  filter->closeTracker();
   qApp->quit();
 }
 
 void TrackerWindow::newTracker()
 {
-  // TODO action close any open files, create new one
+  QString trackerFile = QFileDialog::getOpenFileName(this,
+    tr("New Movie Tracker"), "", tr("Tracker Files (*.trk)"));
+  Tracker *newTracker = new Tracker(trackerFile);
+  if (newTracker->hasError())
+  {
+    QMessageBox::critical(this,
+                          "Error opening tracker",
+                          newTracker->getLastError());
+    delete newTracker;
+  }
+  else
+  {
+    filter->setTracker(newTracker);
+  }
 }
 
 void TrackerWindow::loadTracker()
 {
-  // TODO action file selector, if success, close files and open new
+  QString trackerFile = QFileDialog::getOpenFileName(this,
+    tr("Open Movie Tracker"), "", tr("Tracker Files (*.trk)"));
+  Tracker *newTracker = new Tracker(trackerFile);
+  if (newTracker->needsUpdating())
+  {
+    QMessageBox::StandardButton result =
+      QMessageBox::question(this, "Tracker needs updating",
+                            "The tracker file was made using an older version "
+                            "of this program and needs updating.  Do you want "
+                            "to update the file now?");
+    if (result == QMessageBox::Yes)
+    {
+      newTracker->updateSchema();
+    }
+  }
+
+  if (newTracker->hasError())
+  {
+    QMessageBox::critical(this,
+                          "Error opening tracker",
+                          newTracker->getLastError());
+    delete newTracker;
+  }
+  else
+  {
+    filter->setTracker(newTracker);
+  }
 }
 
 void TrackerWindow::aboutTracker()
 {
   QMessageBox::about(this,
                      "About",
-                     "Movie List Tracker\n"
-                     "Copyright 2020 Steven Bergom");
+                     "Movie List Tracker"
+                     "<p>Copyright &copy; 2020 Steven Bergom.  "
+                     "This is an application to keep track of movies and "
+                     "other media you want to experience.");
 }
 
 void TrackerWindow::helpTracker()
