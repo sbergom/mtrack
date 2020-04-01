@@ -19,7 +19,7 @@
 #include <QVBoxLayout>
 #include "entry.h"
 
-EntryField::EntryField(QWidget *parent)
+EntryField::EntryField(QWidget *parent) : QWidget(parent)
 {
   QVBoxLayout *layout = new QVBoxLayout;
   QFormLayout *form = new QFormLayout;
@@ -66,7 +66,8 @@ void EntryField::setTrackedEntry(TrackedEntry *entry)
   this->entry = entry;
   title->setText(entry->getName());
   notes->setText(entry->getNote());
-  date->setText(entry->getDate().toString());
+  //date->setText(entry->getDate().toString());
+  date->setText(entry->getDate());
   comments->setText(entry->getComment());
 }
 
@@ -75,7 +76,8 @@ void EntryField::saveTrackedEntry()
   // TODO can we assume entry is not null?
   entry->setName(title->text());
   entry->setNote(notes->text());
-  entry->setDate(QDate::fromString(date->text()));
+  //entry->setDate(QDate::fromString(date->text()));
+  entry->setDate(date->text());
   entry->setComment(comments->toPlainText());
 }
 
@@ -84,6 +86,7 @@ void EntryField::cancelTrackedEntry()
   // TODO can we assume entry is not null?
   title->setText(entry->getName());
   notes->setText(entry->getNote());
-  date->setText(entry->getDate().toString());
+  //date->setText(entry->getDate().toString());
+  date->setText(entry->getDate());
   comments->setText(entry->getComment());
 }

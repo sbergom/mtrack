@@ -6,7 +6,7 @@ TEMPLATE = app
 TARGET = mtrack
 INCLUDEPATH += .
 
-QT += widgets
+QT += widgets sql
 # You can make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
 # Please consult the documentation of the deprecated API in order to know

@@ -20,7 +20,27 @@
 #include <QDate>
 #include <QList>
 #include <QString>
+#include <QSqlDatabase>
+#include <QSqlTableModel>
+#include <QSqlQuery>
 
+class Tracker;
+class TrackedEntry;
+
+/**
+ * create table metadata (
+ *   key varchar(100) not null,
+ *   value varchar(512)
+ * );
+ *
+ * create table tracked_list (
+ *   id integer primary key asc,
+ *   title varchar(256) not null,
+ *   viewing_notes varchar(512),
+ *   date_viewed date,
+ *   comments clob
+ * );
+ */
 class TrackedEntry
 {
 public:
@@ -37,8 +57,8 @@ public:
   QString getComment() { return comment; }
   void setComment(QString n) { comment = n; }
 
-  QDate getDate() { return date; }
-  void setDate(QDate d) { date = d; }
+  QString getDate() { return date; }
+  void setDate(QString d) { date = d; }
 
   // Delete the entry.  Any pending operations are rolled back.  If
   // the entry has not committed, it is deleted as if it never existed.
@@ -51,13 +71,14 @@ public:
   friend class Tracker;
 
 private:
-  TrackedEntry(QString id);
+  TrackedEntry(Tracker *owner, QString id);
 
   QString id;
   QString name;
   QString note;
   QString comment;
-  QDate date;
+  QString date;
+  Tracker *owner;
 };
 
 class Tracker
@@ -68,8 +89,7 @@ public:
   ~Tracker();
 
   void close();
-  // TODO this should be an iterator
-  void getEntries(QString filter);
+  QSqlTableModel* getEntries(QString filter);
   TrackedEntry* getEntry(QString id);
   TrackedEntry* newTrackedEntry();
 
@@ -79,8 +99,20 @@ public:
 
   QString getLastError() { return lastError; }
 
+  friend class TrackedEntry;
+
 private:
+  void reap(TrackedEntry *entry);
+  
+  QSqlDatabase db_conn;
+  QSqlTableModel *entries;
   QString lastError;
+  bool isInError;
+  bool schemaNeedsUpdating;
+
+  QSqlQuery insertEntry;
+  QSqlQuery updateEntry;
+  QSqlQuery selectEntry;
 };
 
 #endif // TRACKER_H

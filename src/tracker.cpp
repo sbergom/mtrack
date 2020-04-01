@@ -14,34 +14,72 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QDebug>
 #include "tracker.h"
 
-TrackedEntry::TrackedEntry(QString id)
+#define MTRACK_SUPPORTED_SCHEMA 1
+
+TrackedEntry::TrackedEntry(Tracker *owner, QString id)
 {
+  this->owner = owner;
+  this->id = id;
   if (id == "")
   {
-    // TODO initialize defaults
+    name = "";
+    note = "";
+    comment = "";
+    date = "";
   }
   else
   {
-    // TODO read from stream
+    owner->selectEntry.addBindValue(id);
+    owner->selectEntry.exec();
+    QSqlRecord record = owner->selectEntry.record();
+    owner->selectEntry.first();
+    name = owner->selectEntry.value(record.indexOf("title")).toString();
+    note = owner->selectEntry.value(record.indexOf("viewing_notes")).toString();
+    comment = owner->selectEntry.value(record.indexOf("comments")).toString();
+    date = owner->selectEntry.value(record.indexOf("date_viewed")).toString();
   }
 }
 
 TrackedEntry::~TrackedEntry()
 {
-  cancelEntry();
   // TODO free resources
 }
 
 void TrackedEntry::cancelEntry()
 {
-  // TODO
+  owner->reap(this);
 }
 
 void TrackedEntry::saveEntry()
 {
-  // TODO
+  if (id == "")
+  {
+    owner->insertEntry.addBindValue(name);
+    owner->insertEntry.addBindValue(note);
+    owner->insertEntry.addBindValue(date);
+    owner->insertEntry.addBindValue(comment);
+    owner->insertEntry.exec();
+    // TODO check success
+    // TODO get new id and set it locally (this is why we don't use
+    // automatically incrementing primary keys)
+  }
+  else
+  {
+    owner->updateEntry.addBindValue(name);
+    owner->updateEntry.addBindValue(note);
+    owner->updateEntry.addBindValue(date);
+    owner->updateEntry.addBindValue(comment);
+    owner->updateEntry.addBindValue(id);
+    owner->updateEntry.exec();
+    // TODO check success
+  }
 }
 
 Tracker::Tracker()
@@ -50,7 +88,88 @@ Tracker::Tracker()
 
 Tracker::Tracker(QString filename)
 {
-  // TODO 
+  isInError = false;
+  schemaNeedsUpdating = false;
+  bool exists = QFile::exists(filename);
+  bool writeable = (QFile::permissions(filename)&QFileDevice::WriteUser) != 0;
+  if (exists && !writeable)
+  {
+    isInError = true;
+    lastError = "filename not writeable";
+    return;
+  }
+
+  db_conn = QSqlDatabase::addDatabase("QSQLITE");
+  db_conn.setDatabaseName(filename);
+  if (!db_conn.open())
+  {
+    isInError = true;
+    lastError = db_conn.lastError().text();
+    return;
+  }
+
+  if (!exists)
+  {
+    // tracker file doesn't exist, create and initialize
+    db_conn.transaction();
+    QSqlQuery createMetadata("create table metadata ("
+                             "  key varchar(100) not null,"
+                             "  value varchar(512)"
+                             ")", db_conn);
+    createMetadata.exec();
+    QSqlQuery createTracker(" create table tracked_list ("
+                            "   id integer primary key asc,"
+                            "   title varchar(256) not null,"
+                            "   viewing_notes varchar(512),"
+                            "   date_viewed date,"
+                            "   comments clob"
+                            ")", db_conn);
+    createTracker.exec();
+
+    QSqlQuery insertMetadata(db_conn);
+    insertMetadata.prepare("insert into metadata (key, value) values (?, ?)");
+    insertMetadata.addBindValue("schema.app");
+    insertMetadata.addBindValue("mtrack");
+    insertMetadata.exec();
+    insertMetadata.addBindValue("schema.version");
+    QString version;
+    version.setNum(MTRACK_SUPPORTED_SCHEMA);
+    insertMetadata.addBindValue(version);
+    insertMetadata.exec();
+
+    if (!db_conn.commit())
+    {
+      isInError = true;
+      lastError = db_conn.lastError().text();
+      return;
+    }
+  }
+
+  QString schemaApp = getMetaData("schema.app");
+  int schemaVersion = getMetaData("schema.version").toInt();
+
+  if (schemaApp != "mtrack")
+  {
+    isInError = true;
+    lastError = "Not a movie tracker database";
+  }
+  else if (schemaVersion < MTRACK_SUPPORTED_SCHEMA)
+  {
+    isInError = true;
+    schemaNeedsUpdating = true;
+  }
+  else if (schemaVersion > MTRACK_SUPPORTED_SCHEMA)
+  {
+    isInError = true;
+    lastError = "Movie tracker file is newer than expected";
+  }
+
+  entries = new QSqlTableModel(0, db_conn);
+  entries->setTable("tracked_list");
+
+  insertEntry = QSqlQuery("insert into tracked_list (title, viewing_notes, date_viewed, comments) values (?, ?, ?, ?)", db_conn);
+  updateEntry = QSqlQuery("update tracked_list set (?, ?, ?, ?) where id = ?", db_conn);
+  selectEntry = QSqlQuery("select * from tracked_list where id = ?", db_conn);
 }
 
 Tracker::~Tracker()
@@ -61,39 +180,73 @@ Tracker::~Tracker()
 
 void Tracker::close()
 {
-  // TODO 
+  // TODO
+  // commit any transactions
+  // shut down connection
 }
 
-void Tracker::getEntries(QString filter)
+QSqlTableModel* Tracker::getEntries(QString filter)
 {
-  // TODO
+  if (!isInError)
+  {
+    // TODO the filter argument needs to be cleaned of '
+    entries->setFilter("title like '" + filter + "'");
+    entries->select();
+    return entries;
+  }
+  return nullptr;
 }
 
 TrackedEntry* Tracker::getEntry(QString id)
 {
-  // TODO
+  if (!isInError)
+  {
+    return new TrackedEntry(this, id);
+  }
   return nullptr;
 }
 
 TrackedEntry* Tracker::newTrackedEntry()
 {
-  // TODO
+  if (!isInError)
+  {
+    return new TrackedEntry(this, "");
+  }
   return nullptr;
 }
 
 bool Tracker::needsUpdating()
 {
-  // TODO
-  return false;
+  return schemaNeedsUpdating;
 }
 
 bool Tracker::updateSchema()
 {
   // TODO
-  return false;
+  // when updated, schemaNeedsUpdating = false
+  return !schemaNeedsUpdating;
 }
 
 QString Tracker::getMetaData(QString property)
 {
-  // TODO 
+  if (!isInError)
+  {
+    QSqlQuery mdQuery(db_conn);
+    mdQuery.prepare("select value from metadata where key = ?");
+    mdQuery.addBindValue(property);
+    mdQuery.exec();
+    QSqlRecord record = mdQuery.record();
+    // TODO what if metadata doesn't exist?
+    if (mdQuery.first())
+    {
+      return mdQuery.value(record.indexOf("value")).toString();
+    }
+  }
+  return "";
+}
+
+void Tracker::reap(TrackedEntry *entry)
+{
+  // TODO more?
+  delete entry;
 }
