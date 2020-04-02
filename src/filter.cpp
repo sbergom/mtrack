@@ -29,18 +29,24 @@ TrackerFilter::TrackerFilter(EntryField *entry, QWidget *parent) : QWidget(paren
   filterResults = new QListView;
   filterResults->setSelectionMode(QAbstractItemView::SingleSelection);
 
+  newButton = new QPushButton("New Entry");
+  connect(newButton, SIGNAL(clicked()), this, SLOT(newTrackedEntry()));
+
   connect(filterResults, SIGNAL(clicked(const QModelIndex&)),
           this, SLOT(selectResult(const QModelIndex&)));
   connect(filterBox, SIGNAL(textChanged(const QString&)),
           this, SLOT(refilterResults(const QString&)));
 
   layout->addWidget(filterBox);
+  layout->addWidget(newButton);
   layout->addWidget(filterResults);
 
   // TODO align to top
 
   this->setLayout(layout);
   fieldEditor = entry;
+  tracker = nullptr;
+  entry->setFilter(this);
 }
 
 void TrackerFilter::setTracker(Tracker *newTracker)
@@ -48,6 +54,7 @@ void TrackerFilter::setTracker(Tracker *newTracker)
   closeTracker();
 
   tracker = newTracker;
+  fieldEditor->setTrackedEntry(newTracker->newTrackedEntry());
   refilterResults("");
 }
 
@@ -55,9 +62,19 @@ void TrackerFilter::closeTracker()
 {
   if (tracker)
   {
-    // TODO also need to retrieve entry->trackedEntry
+    fieldEditor->closeTrackedEntry();
     tracker->close();
   }
+}
+
+const QString TrackerFilter::getFilterText()
+{
+  return filterBox->text();
+}
+
+void TrackerFilter::newTrackedEntry()
+{
+  fieldEditor->setTrackedEntry(tracker->newTrackedEntry());
 }
 
 void TrackerFilter::refilterResults(const QString &text)

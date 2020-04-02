@@ -22,12 +22,13 @@
 #include "tracker.h"
 
 #define MTRACK_SUPPORTED_SCHEMA 1
+#define MTRACK_NEWENTRY_ID ""
 
 TrackedEntry::TrackedEntry(Tracker *owner, QString id)
 {
   this->owner = owner;
   this->id = id;
-  if (id == "")
+  if (id == MTRACK_NEWENTRY_ID)
   {
     name = "";
     note = "";
@@ -59,8 +60,10 @@ void TrackedEntry::cancelEntry()
 
 void TrackedEntry::saveEntry()
 {
-  if (id == "")
+  if (id == MTRACK_NEWENTRY_ID)
   {
+    id.setNum(owner->nextId++);
+    owner->insertEntry.addBindValue(id);
     owner->insertEntry.addBindValue(name);
     owner->insertEntry.addBindValue(note);
     owner->insertEntry.addBindValue(date);
@@ -79,7 +82,6 @@ void TrackedEntry::saveEntry()
     owner->updateEntry.addBindValue(id);
     owner->updateEntry.exec();
     // TODO check success
-    qDebug() << owner->db_conn.lastError().text();
   }
 }
 
@@ -165,12 +167,32 @@ Tracker::Tracker(QString filename)
     lastError = "Movie tracker file is newer than expected";
   }
 
-  entries = new QSqlTableModel(0, db_conn);
-  entries->setTable("tracked_list");
+  if (!isInError)
+  {
+    entries = new QSqlTableModel(0, db_conn);
+    entries->setTable("tracked_list");
 
-  insertEntry = QSqlQuery("insert into tracked_list (title, viewing_notes, date_viewed, comments) values (?, ?, ?, ?)", db_conn);
-  updateEntry = QSqlQuery("update tracked_list set title = ?, viewing_notes = ?, date_viewed = ?, comments = ? where id = ?", db_conn);
-  selectEntry = QSqlQuery("select * from tracked_list where id = ?", db_conn);
+    insertEntry = QSqlQuery("insert into tracked_list "
+                            "(id, title, viewing_notes, date_viewed, comments) "
+                            "values (?, ?, ?, ?, ?)", db_conn);
+    updateEntry = QSqlQuery("update tracked_list "
+                            "set title = ?, viewing_notes = ?, "
+                            "date_viewed = ?, comments = ? "
+                            "where id = ?", db_conn);
+    selectEntry = QSqlQuery("select * from tracked_list where id = ?", db_conn);
+  }
+
+  if (exists && !isInError)
+  {
+    QSqlQuery getmaxid("select max(id) from tracked_list", db_conn);
+    getmaxid.exec();
+    getmaxid.first();
+    nextId = getmaxid.value(0).toInt() + 1;
+  }
+  else
+  {
+    nextId = 1;
+  }
 }
 
 Tracker::~Tracker()
@@ -190,9 +212,8 @@ QSqlTableModel* Tracker::getEntries(QString filter)
 {
   if (!isInError)
   {
-    // TODO the filter argument needs to be cleaned of '
-    entries->setFilter("title like '%" + filter + "%'");
-    //entries->setSort(1);
+    entries->setFilter("title like '%" + filter.replace('\'', "''") + "%'");
+    entries->setSort(1, Qt::AscendingOrder);
     entries->select();
     return entries;
   }
@@ -212,7 +233,7 @@ TrackedEntry* Tracker::newTrackedEntry()
 {
   if (!isInError)
   {
-    return new TrackedEntry(this, "");
+    return new TrackedEntry(this, MTRACK_NEWENTRY_ID);
   }
   return nullptr;
 }
@@ -225,6 +246,7 @@ bool Tracker::needsUpdating()
 bool Tracker::updateSchema()
 {
   // TODO
+  // TODO after (successfully) updating need to finish initialization
   // when updated, schemaNeedsUpdating = false
   return !schemaNeedsUpdating;
 }

@@ -18,6 +18,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include "entry.h"
+#include "filter.h"
 
 EntryField::EntryField(QWidget *parent) : QWidget(parent)
 {
@@ -35,8 +36,6 @@ EntryField::EntryField(QWidget *parent) : QWidget(parent)
   form->addRow("Date", date);
   form->addRow("Comments", comments);
 
-  newButton = new QPushButton("New");
-  // TODO onclick clear filterReults.select, create new TrackedEntry, update this
   saveButton = new QPushButton("Save");
   connect(saveButton, SIGNAL(clicked()), this, SLOT(saveTrackedEntry()));
 
@@ -45,7 +44,6 @@ EntryField::EntryField(QWidget *parent) : QWidget(parent)
 
   // TODO disable buttons until data has changed
 
-  buttons->addWidget(newButton);
   buttons->addWidget(cancelButton);
   buttons->addWidget(saveButton);
   // TODO align right
@@ -54,6 +52,7 @@ EntryField::EntryField(QWidget *parent) : QWidget(parent)
   layout->addLayout(buttons);
 
   this->setLayout(layout);
+  entry = nullptr;
 }
 
 void EntryField::setTrackedEntry(TrackedEntry *entry)
@@ -71,6 +70,14 @@ void EntryField::setTrackedEntry(TrackedEntry *entry)
   comments->setText(entry->getComment());
 }
 
+void EntryField::closeTrackedEntry()
+{
+  if (entry)
+  {
+    entry->cancelEntry();
+  }
+}
+
 void EntryField::saveTrackedEntry()
 {
   // TODO can we assume entry is not null?
@@ -81,6 +88,8 @@ void EntryField::saveTrackedEntry()
   entry->setComment(comments->toPlainText());
 
   entry->saveEntry();
+
+  filter->refilterResults(filter->getFilterText());
 }
 
 void EntryField::cancelTrackedEntry()

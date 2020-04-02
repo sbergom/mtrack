@@ -32,8 +32,10 @@ public:
 
   void setTracker(Tracker *newTracker);
   void closeTracker();
+  const QString getFilterText();
 
 private:
+  QPushButton *newButton;
   QLineEdit *filterBox;
   QListView *filterResults;
   Tracker   *tracker;
@@ -43,6 +45,7 @@ private:
 signals:
 
 public slots:
+  void newTrackedEntry();
   void refilterResults(const QString &text);
   void selectResult(const QModelIndex&);
 };

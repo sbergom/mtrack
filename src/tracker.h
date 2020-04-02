@@ -114,6 +114,8 @@ private:
   QSqlQuery insertEntry;
   QSqlQuery updateEntry;
   QSqlQuery selectEntry;
+
+  int nextId;
 };
 
 #endif // TRACKER_H

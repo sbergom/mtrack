@@ -85,19 +85,26 @@ void TrackerWindow::exitApplication()
 
 void TrackerWindow::newTracker()
 {
-  QString trackerFile = QFileDialog::getOpenFileName(this,
-    tr("New Movie Tracker"), "", tr("Tracker Files (*.trk)"));
-  Tracker *newTracker = new Tracker(trackerFile);
-  if (newTracker->hasError())
+  QFileDialog dialog(this,
+                     tr("New Movie Tracker"),
+                     "",
+                     tr("Tracker Files (*.trk)"));
+  dialog.setAcceptMode(QFileDialog::AcceptSave);
+  if (dialog.exec())
   {
-    QMessageBox::critical(this,
-                          "Error opening tracker",
-                          newTracker->getLastError());
-    delete newTracker;
-  }
-  else
-  {
-    filter->setTracker(newTracker);
+    QString trackerFile = dialog.selectedFiles().at(0);
+    Tracker *newTracker = new Tracker(trackerFile);
+    if (newTracker->hasError())
+    {
+      QMessageBox::critical(this,
+                            "Error opening tracker",
+                            newTracker->getLastError());
+      delete newTracker;
+    }
+    else
+    {
+      filter->setTracker(newTracker);
+    }
   }
 }
 

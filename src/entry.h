@@ -26,23 +26,27 @@
 
 #include "tracker.h"
 
+class TrackerFilter;
+
 class EntryField : public QWidget
 {
   Q_OBJECT;
 public:
   explicit EntryField(QWidget *parent = nullptr);
 
+  void setFilter(TrackerFilter *f) { filter = f; }
   void setTrackedEntry(TrackedEntry *entry);
+  void closeTrackedEntry();
 
 private:
   QLineEdit *title;
   QLineEdit *notes;
   QLineEdit *date;
   QTextEdit *comments;
-  QPushButton *newButton;
   QPushButton *saveButton;
   QPushButton *cancelButton;
   TrackedEntry *entry;
+  TrackerFilter *filter;
   
 signals:
 
