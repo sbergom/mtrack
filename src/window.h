@@ -19,15 +19,31 @@
 
 #include <QMainWindow>
 #include <QWidget>
+
 #include "entry.h"
 #include "filter.h"
 
+/*!
+   \class TrackerWindow
+   \brief The TrackerWindow represents the main interacting window.
+
+   The TrackerWindow keeps track of all widgets and data entry used in
+   the Movie List Tracker application.  All interface elements
+   originate from here and all file handling is coordinated from this
+   point.
+ */
 class TrackerWindow : public QMainWindow
 {
   Q_OBJECT;
 public:
   explicit TrackerWindow(QWidget *parent = nullptr);
 
+  /*!
+    \fn void TrackerWindow::loadTracker(const QString &trackerFile)
+
+    Load the selected file to be tracked and coordinate any errors or
+    needs for updating the schema with the user.
+   */
   void loadTracker(const QString &trackerFile);
 
 private:
@@ -39,10 +55,41 @@ private:
 signals:
 
 public slots:
+  /*!
+    \fn void TrackerWindow::exitApplication()
+
+    Coordinate the exiting of the application saving all data safely.
+   */
   void exitApplication();
+
+  /*!
+    \fn void TrackerWindow::newTracker()
+
+    Construct a new tracker file with a name supplied by the user and
+    set it up as the currently edited file.
+   */
   void newTracker();
+
+  /*!
+    \fn void TrackerWindow::loadTracker()
+
+    Load a new tracker file specfied by a dialog box and set it up as
+    the currently edited file.
+   */
   void loadTracker();
+
+  /*!
+    \fn void TrackerWindow::aboutTracker()
+
+    Display an "About Movie List Tracker" dialog box.
+   */
   void aboutTracker();
+
+  /*!
+    \fn void TrackerWindow::helpTracker()
+
+    Display helpful information on using the Movie List Tracker.
+   */
   void helpTracker();
 };
 

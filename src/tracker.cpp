@@ -70,8 +70,6 @@ void TrackedEntry::saveEntry()
     owner->insertEntry.addBindValue(comment);
     owner->insertEntry.exec();
     // TODO check success
-    // TODO get new id and set it locally (this is why we don't use
-    // automatically incrementing primary keys)
   }
   else
   {
@@ -98,7 +96,7 @@ Tracker::Tracker(QString filename)
   if (exists && !writeable)
   {
     isInError = true;
-    lastError = "filename not writeable";
+    lastError = "file '" + filename + "' not writeable";
     return;
   }
 
