@@ -1,12 +1,23 @@
 * DONE Initialize Git
 * TODO Make build system
+  Use CMake
 * DONE Make UI layout
-* TODO Hook layout together
-* TODO Read/Write data to file
+* DONE Hook layout together
+* DONE Read/Write data to file
   table metadata ( key, value)
   -- schema.version, 1
   -- schema.app, mtrack
   table list ( id, title, viewing_notes, date_viewed, comments )
+* DONE Make New file
+* DONE Make new entries
+* DONE connect filter to saving entry
+* TODO Parse filename from command line
+* TODO start up with an Open dialog
+  if user doesn't select a file, close
+* TODO Implement schema update
+* TODO source code documentation
+* TODO upload to Github
+* TODO localization
 * TODO Make Docker build
   Fedora
   Debian
