@@ -112,6 +112,11 @@ void TrackerWindow::loadTracker()
 {
   QString trackerFile = QFileDialog::getOpenFileName(this,
     tr("Open Movie Tracker"), "", tr("Tracker Files (*.trk)"));
+  loadTracker(trackerFile);
+}
+
+void TrackerWindow::loadTracker(const QString &trackerFile)
+{
   Tracker *newTracker = new Tracker(trackerFile);
   if (newTracker->needsUpdating())
   {

@@ -11,7 +11,7 @@
 * DONE Make New file
 * DONE Make new entries
 * DONE connect filter to saving entry
-* TODO Parse filename from command line
+* DONE Parse filename from command line
 * TODO start up with an Open dialog
   if user doesn't select a file, close
 * TODO Implement schema update

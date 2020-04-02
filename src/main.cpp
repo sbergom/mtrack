@@ -15,7 +15,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include <QApplication>
-#include <QDebug>
 #include "window.h"
 #include "tracker.h"
 
@@ -23,10 +22,21 @@ int main(int argc, char *argv[])
 {
   QApplication app(argc, argv);
 
-  // TODO parse out filename
-
   TrackerWindow *window = new TrackerWindow();
   window->show();
+
+  // Parse out a filename to load immediately.  Don't need any fancy
+  // argument parsing at this time since we only have one argument.
+  for (int i=0; i<argc; i++)
+  {
+    if (strcmp(argv[i], "-f") == 0)
+    {
+      if (++i < argc)
+      {
+        window->loadTracker(argv[i]);
+      }
+    }
+  }
 
   return app.exec();
 }

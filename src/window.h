@@ -27,7 +27,9 @@ class TrackerWindow : public QMainWindow
   Q_OBJECT;
 public:
   explicit TrackerWindow(QWidget *parent = nullptr);
-  
+
+  void loadTracker(const QString &trackerFile);
+
 private:
   EntryField *entry;
   TrackerFilter *filter;
