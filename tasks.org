@@ -1,5 +1,5 @@
 * DONE Initialize Git
-* TODO Make build system
+* DONE Make build system
   Use CMake
 * DONE Make UI layout
 * DONE Hook layout together
@@ -15,7 +15,7 @@
 * TODO start up with an Open dialog
   if user doesn't select a file, close
 * TODO Implement schema update
-* TODO source code documentation
+* DONE source code documentation
 * TODO upload to Github
 * TODO localization
 * TODO Make Docker build
