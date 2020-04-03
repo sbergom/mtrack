@@ -58,6 +58,16 @@ void TrackedEntry::cancelEntry()
   owner->reap(this);
 }
 
+void TrackedEntry::deleteEntry()
+{
+  if (id != MTRACK_NEWENTRY_ID)
+  {
+    owner->deleteEntry.addBindValue(id);
+    owner->deleteEntry.exec();
+  }
+  cancelEntry();
+}
+
 void TrackedEntry::saveEntry()
 {
   if (id == MTRACK_NEWENTRY_ID)
@@ -178,6 +188,7 @@ Tracker::Tracker(QString filename)
                             "date_viewed = ?, comments = ? "
                             "where id = ?", db_conn);
     selectEntry = QSqlQuery("select * from tracked_list where id = ?", db_conn);
+    deleteEntry = QSqlQuery("delete from tracked_list where id = ?", db_conn);
   }
 
   if (exists && !isInError)

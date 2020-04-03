@@ -21,3 +21,6 @@
 * TODO Make Docker build
   Fedora
   Debian
+* DONE Add function to delete entry
+* TODO Add function import other tracker list
+

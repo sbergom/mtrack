@@ -70,12 +70,20 @@ private:
   QTextEdit *comments;
   QPushButton *saveButton;
   QPushButton *cancelButton;
+  QPushButton *deleteButton;
   TrackedEntry *entry;
   TrackerFilter *filter;
   
 signals:
 
 public slots:
+
+  /*!
+    \fn void EntryField::deleteTrackedEntry()
+
+    Delete the entry from the tracked list.
+  */
+  void deleteTrackedEntry();
 
   /*!
     \fn void EntryField::saveTrackedEntry()

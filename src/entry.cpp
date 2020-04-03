@@ -36,6 +36,9 @@ EntryField::EntryField(QWidget *parent) : QWidget(parent)
   form->addRow("Date", date);
   form->addRow("Comments", comments);
 
+  deleteButton = new QPushButton("Delete");
+  connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteTrackedEntry()));
+
   saveButton = new QPushButton("Save");
   connect(saveButton, SIGNAL(clicked()), this, SLOT(saveTrackedEntry()));
 
@@ -44,6 +47,7 @@ EntryField::EntryField(QWidget *parent) : QWidget(parent)
 
   // TODO disable buttons until data has changed
 
+  buttons->addWidget(deleteButton);
   buttons->addWidget(cancelButton);
   buttons->addWidget(saveButton);
   // TODO align right
@@ -78,9 +82,20 @@ void EntryField::closeTrackedEntry()
   }
 }
 
+void EntryField::deleteTrackedEntry()
+{
+  if (entry)
+  {
+    entry->deleteEntry();
+    entry = nullptr;
+    filter->newTrackedEntry();
+
+    filter->refilterResults(filter->getFilterText());
+  }
+}
+
 void EntryField::saveTrackedEntry()
 {
-  // TODO can we assume entry is not null?
   entry->setName(title->text());
   entry->setNote(notes->text());
   //entry->setDate(QDate::fromString(date->text()));
@@ -94,7 +109,6 @@ void EntryField::saveTrackedEntry()
 
 void EntryField::cancelTrackedEntry()
 {
-  // TODO can we assume entry is not null?
   title->setText(entry->getName());
   notes->setText(entry->getNote());
   //date->setText(entry->getDate().toString());

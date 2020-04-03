@@ -90,6 +90,14 @@ public:
    */
   void saveEntry();
 
+  /*!
+    \fn void TrackedEntry::deleteEntry()
+
+    Delete the entry from the tracked list.  Afterwards the
+    TrackedEntry object will not be valid for use.
+   */
+  void deleteEntry();
+
   friend class Tracker;
 
 private:
@@ -215,6 +223,7 @@ private:
   QSqlQuery insertEntry;
   QSqlQuery updateEntry;
   QSqlQuery selectEntry;
+  QSqlQuery deleteEntry;
 
   int nextId;
 };
