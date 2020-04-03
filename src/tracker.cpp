@@ -63,7 +63,10 @@ void TrackedEntry::deleteEntry()
   if (id != MTRACK_NEWENTRY_ID)
   {
     owner->deleteEntry.addBindValue(id);
-    owner->deleteEntry.exec();
+    if (!owner->deleteEntry.exec())
+    {
+      owner->lastError = owner->deleteEntry.lastError().text();
+    }
   }
   cancelEntry();
 }
@@ -78,8 +81,10 @@ void TrackedEntry::saveEntry()
     owner->insertEntry.addBindValue(note);
     owner->insertEntry.addBindValue(date);
     owner->insertEntry.addBindValue(comment);
-    owner->insertEntry.exec();
-    // TODO check success
+    if (!owner->insertEntry.exec())
+    {
+      owner->lastError = owner->insertEntry.lastError().text();
+    }
   }
   else
   {
@@ -88,8 +93,10 @@ void TrackedEntry::saveEntry()
     owner->updateEntry.addBindValue(date);
     owner->updateEntry.addBindValue(comment);
     owner->updateEntry.addBindValue(id);
-    owner->updateEntry.exec();
-    // TODO check success
+    if (!owner->updateEntry.exec())
+    {
+      owner->lastError = owner->updateEntry.lastError().text();
+    }
   }
 }
 
@@ -269,7 +276,6 @@ QString Tracker::getMetaData(QString property)
     mdQuery.addBindValue(property);
     mdQuery.exec();
     QSqlRecord record = mdQuery.record();
-    // TODO what if metadata doesn't exist?
     if (mdQuery.first())
     {
       return mdQuery.value(record.indexOf("value")).toString();
