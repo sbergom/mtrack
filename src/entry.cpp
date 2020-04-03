@@ -31,18 +31,18 @@ EntryField::EntryField(QWidget *parent) : QWidget(parent)
   date = new QLineEdit;
   comments = new QTextEdit;
 
-  form->addRow("Title", title);
-  form->addRow("Notes", notes);
-  form->addRow("Date", date);
-  form->addRow("Comments", comments);
+  form->addRow(tr("Title"), title);
+  form->addRow(tr("Notes"), notes);
+  form->addRow(tr("Date"), date);
+  form->addRow(tr("Comments"), comments);
 
-  deleteButton = new QPushButton("Delete");
+  deleteButton = new QPushButton(tr("Delete"));
   connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteTrackedEntry()));
 
-  saveButton = new QPushButton("Save");
+  saveButton = new QPushButton(tr("Save"));
   connect(saveButton, SIGNAL(clicked()), this, SLOT(saveTrackedEntry()));
 
-  cancelButton = new QPushButton("Cancel");
+  cancelButton = new QPushButton(tr("Cancel"));
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelTrackedEntry()));
 
   // TODO disable buttons until data has changed

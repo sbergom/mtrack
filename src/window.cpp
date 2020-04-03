@@ -48,15 +48,15 @@ TrackerWindow::TrackerWindow(QWidget *parent) : QMainWindow(parent)
 
 void TrackerWindow::buildMainMenu()
 {
-  QMenu *fileMenu = menuBar()->addMenu("&File");
-  QMenu *helpMenu = menuBar()->addMenu("&Help");
+  QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+  QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
   QAction *qa;
 
-  qa = fileMenu->addAction("&New");
+  qa = fileMenu->addAction(tr("&New"));
   qa->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
   connect(qa, SIGNAL(triggered()), this, SLOT(newTracker()));
 
-  qa = fileMenu->addAction("&Open");
+  qa = fileMenu->addAction(tr("&Open"));
   qa->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
   connect(qa, SIGNAL(triggered()), this, SLOT(loadTracker()));
 
@@ -65,15 +65,15 @@ void TrackerWindow::buildMainMenu()
 
   fileMenu->addSeparator();
 
-  qa = fileMenu->addAction("E&xit");
+  qa = fileMenu->addAction(tr("E&xit"));
   qa->setShortcuts(QKeySequence::Quit);
   connect(qa, SIGNAL(triggered()), this, SLOT(exitApplication()));
 
-  qa = helpMenu->addAction("Help");
+  qa = helpMenu->addAction(tr("Help"));
   qa->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
   connect(qa, SIGNAL(triggered()), this, SLOT(helpTracker()));
 
-  qa = helpMenu->addAction("About");
+  qa = helpMenu->addAction(tr("About"));
   connect(qa, SIGNAL(triggered()), this, SLOT(aboutTracker()));
 }
 
@@ -97,7 +97,7 @@ void TrackerWindow::newTracker()
     if (newTracker->hasError())
     {
       QMessageBox::critical(this,
-                            "Error opening tracker",
+                            tr("Error opening tracker"),
                             newTracker->getLastError());
       delete newTracker;
     }
@@ -121,10 +121,10 @@ void TrackerWindow::loadTracker(const QString &trackerFile)
   if (newTracker->needsUpdating())
   {
     QMessageBox::StandardButton result =
-      QMessageBox::question(this, "Tracker needs updating",
-                            "The tracker file was made using an older version "
-                            "of this program and needs updating.  Do you want "
-                            "to update the file now?");
+      QMessageBox::question(this, tr("Tracker needs updating"),
+                            tr("The tracker file was made using an older "
+                               "version of this program and needs updating. "
+                               "Do you want to update the file now?"));
     if (result == QMessageBox::Yes)
     {
       newTracker->updateSchema();
@@ -134,7 +134,7 @@ void TrackerWindow::loadTracker(const QString &trackerFile)
   if (newTracker->hasError())
   {
     QMessageBox::critical(this,
-                          "Error opening tracker",
+                          tr("Error opening tracker"),
                           newTracker->getLastError());
     delete newTracker;
   }
@@ -147,16 +147,16 @@ void TrackerWindow::loadTracker(const QString &trackerFile)
 void TrackerWindow::aboutTracker()
 {
   QMessageBox::about(this,
-                     "About",
-                     "Movie List Tracker"
-                     "<p>Copyright &copy; 2020 Steven Bergom.  "
-                     "This is an application to keep track of movies and "
-                     "other media you want to experience.");
+                     tr("About"),
+                     tr("Movie List Tracker"
+                        "<p>Copyright &copy; 2020 Steven Bergom.  "
+                        "This is an application to keep track of movies and "
+                        "other media you want to experience."));
 }
 
 void TrackerWindow::helpTracker()
 {
   QMessageBox::information(this,
-                           "You need help?",
-                           "Figure it out yourself!");
+                           tr("You need help?"),
+                           tr("Figure it out yourself!"));
 }

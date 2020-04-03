@@ -29,7 +29,7 @@ TrackerFilter::TrackerFilter(EntryField *entry, QWidget *parent) : QWidget(paren
   filterResults = new QListView;
   filterResults->setSelectionMode(QAbstractItemView::SingleSelection);
 
-  newButton = new QPushButton("New Entry");
+  newButton = new QPushButton(tr("New Entry"));
   connect(newButton, SIGNAL(clicked()), this, SLOT(newTrackedEntry()));
 
   connect(filterResults, SIGNAL(clicked(const QModelIndex&)),

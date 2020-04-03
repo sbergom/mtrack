@@ -16,7 +16,7 @@
   if user doesn't select a file, close
 * TODO Implement schema update
 * DONE source code documentation
-* TODO upload to Github
+* DONE upload to Github
 * TODO localization
 * TODO Make Docker build
   Fedora
