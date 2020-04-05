@@ -16,4 +16,5 @@ add_executable(mtrack
 
 target_link_libraries(mtrack Qt5::Widgets Qt5::Sql)
 
-install(TARGETS mtrack)
+install(TARGETS mtrack
+        RUNTIME DESTINATION bin)
