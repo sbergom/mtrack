@@ -19,6 +19,7 @@
 #include <QVBoxLayout>
 #include "entry.h"
 #include "filter.h"
+#include <stdio.h>
 
 EntryField::EntryField(QWidget *parent) : QWidget(parent)
 {
@@ -35,6 +36,15 @@ EntryField::EntryField(QWidget *parent) : QWidget(parent)
   form->addRow(tr("Notes"), notes);
   form->addRow(tr("Date"), date);
   form->addRow(tr("Comments"), comments);
+
+  connect(title, SIGNAL(textChanged(const QString&)),
+          this, SLOT(entryModified(const QString&)));
+  connect(notes, SIGNAL(textChanged(const QString&)),
+          this, SLOT(entryModified(const QString&)));
+  connect(date, SIGNAL(textChanged(const QString&)),
+          this, SLOT(entryModified(const QString&)));
+  connect(comments, SIGNAL(textChanged()),
+          this, SLOT(entryModified()));
 
   deleteButton = new QPushButton(tr("Delete"));
   connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteTrackedEntry()));
@@ -57,6 +67,11 @@ EntryField::EntryField(QWidget *parent) : QWidget(parent)
 
   this->setLayout(layout);
   entry = nullptr;
+
+  hasModifications = false;
+  saveButton->setEnabled(false);
+  cancelButton->setEnabled(false);
+  deleteButton->setEnabled(false);
 }
 
 void EntryField::setTrackedEntry(TrackedEntry *entry)
@@ -72,6 +87,18 @@ void EntryField::setTrackedEntry(TrackedEntry *entry)
   //date->setText(entry->getDate().toString());
   date->setText(entry->getDate());
   comments->setText(entry->getComment());
+
+  hasModifications = false;
+  saveButton->setEnabled(false);
+  cancelButton->setEnabled(false);
+  if (entry->getID() != MTRACK_NEWENTRY_ID)
+  {
+    deleteButton->setEnabled(true);
+  }
+  else
+  {
+    deleteButton->setEnabled(false);
+  }
 }
 
 void EntryField::closeTrackedEntry()
@@ -91,6 +118,11 @@ void EntryField::deleteTrackedEntry()
     filter->newTrackedEntry();
 
     filter->refilterResults(filter->getFilterText());
+
+    hasModifications = false;
+    saveButton->setEnabled(false);
+    cancelButton->setEnabled(false);
+    deleteButton->setEnabled(false);
   }
 }
 
@@ -105,6 +137,11 @@ void EntryField::saveTrackedEntry()
   entry->saveEntry();
 
   filter->refilterResults(filter->getFilterText());
+
+  hasModifications = false;
+  saveButton->setEnabled(false);
+  cancelButton->setEnabled(false);
+  deleteButton->setEnabled(true);
 }
 
 void EntryField::cancelTrackedEntry()
@@ -114,4 +151,24 @@ void EntryField::cancelTrackedEntry()
   //date->setText(entry->getDate().toString());
   date->setText(entry->getDate());
   comments->setText(entry->getComment());
+
+  hasModifications = false;
+  saveButton->setEnabled(false);
+  cancelButton->setEnabled(false);
+  deleteButton->setEnabled(true);
+}
+
+void EntryField::entryModified(const QString &value)
+{
+  entryModified();
+}
+
+void EntryField::entryModified()
+{
+  if (!hasModifications)
+  {
+    hasModifications = true;
+    saveButton->setEnabled(true);
+    cancelButton->setEnabled(true);
+  }
 }

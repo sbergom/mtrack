@@ -23,4 +23,7 @@
   Debian
 * DONE Add function to delete entry
 * TODO Add function import other tracker list
-
+* DONE Add indicator for need to save
+ * enable Save/Cancel only when edits made
+* DONE Enable Delete button only if entry exists
+* TODO Add warnings when closing with modified data

@@ -73,6 +73,7 @@ private:
   QPushButton *deleteButton;
   TrackedEntry *entry;
   TrackerFilter *filter;
+  bool hasModifications;
   
 signals:
 
@@ -99,6 +100,21 @@ public slots:
   */
   void cancelTrackedEntry();
 
+  /*!
+    \fn void EntryField::entryModified()
+
+    Signal that an entry has been modified and change the UI as
+    necessary.
+  */
+  void entryModified();
+
+  /*!
+    \fn void EntryField::entryModified()
+
+    Signal that an entry has been modified and change the UI as
+    necessary.
+  */
+  void entryModified(const QString &value);
 };
 
 #endif // ENTRY_H

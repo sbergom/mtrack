@@ -22,9 +22,6 @@
 #include <QSqlRecord>
 #include "tracker.h"
 
-#define MTRACK_SUPPORTED_SCHEMA 1
-#define MTRACK_NEWENTRY_ID ""
-
 TrackedEntry::TrackedEntry(Tracker *owner, QString id)
 {
   this->owner = owner;

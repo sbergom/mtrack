@@ -24,6 +24,9 @@
 #include <QSqlTableModel>
 #include <QSqlQuery>
 
+#define MTRACK_SUPPORTED_SCHEMA 1
+#define MTRACK_NEWENTRY_ID ""
+
 class Tracker;
 class TrackedEntry;
 
