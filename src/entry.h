@@ -63,6 +63,13 @@ public:
   */
   void closeTrackedEntry();
 
+  /*!
+    \fn void EntryField::isModified()
+
+    Check wether the displayed entry has un-saved modifications.
+  */
+  bool isModified() { return hasModifications; }
+
 private:
   QLineEdit *title;
   QLineEdit *notes;

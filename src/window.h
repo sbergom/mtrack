@@ -19,6 +19,7 @@
 
 #include <QMainWindow>
 #include <QWidget>
+#include <QCloseEvent>
 
 #include "entry.h"
 #include "filter.h"
@@ -46,11 +47,20 @@ public:
    */
   void loadTracker(const QString &trackerFile);
 
+  /*!
+    \fn void TrackerWindow::closeEvent(QCloseEvent *event)
+
+    Handle the closing of the application by checking if there is
+    unsaved data.
+   */
+  void closeEvent(QCloseEvent *event);
+
 private:
   EntryField *entry;
   TrackerFilter *filter;
 
   void buildMainMenu();
+  bool saveAndClose();
 
 signals:
 

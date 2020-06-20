@@ -77,10 +77,45 @@ void TrackerWindow::buildMainMenu()
   connect(qa, SIGNAL(triggered()), this, SLOT(aboutTracker()));
 }
 
-void TrackerWindow::exitApplication()
+bool TrackerWindow::saveAndClose()
 {
+  if (entry->isModified())
+  {
+    QMessageBox message;
+    message.setText(tr("There are unsaved changes.  Do you really want to close?"));
+    message.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    message.setDefaultButton(QMessageBox::Save);
+    int ret = message.exec();
+    if (ret == QMessageBox::Save)
+    {
+      entry->saveTrackedEntry();
+    }
+    else if (ret == QMessageBox::Cancel)
+    {
+      return false;
+    }
+  }
   filter->closeTracker();
   qApp->quit();
+
+  return true;
+}
+
+void TrackerWindow::closeEvent(QCloseEvent *event)
+{
+  if (saveAndClose())
+  {
+    event->accept();
+  }
+  else
+  {
+    event->ignore();
+  }
+}
+
+void TrackerWindow::exitApplication()
+{
+  saveAndClose();
 }
 
 void TrackerWindow::newTracker()
