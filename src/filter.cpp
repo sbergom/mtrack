@@ -19,6 +19,7 @@
 #include <QSqlTableModel>
 #include <QSqlRecord>
 #include <QDebug>
+#include <QMessageBox>
 #include "filter.h"
 
 TrackerFilter::TrackerFilter(EntryField *entry, QWidget *parent) : QWidget(parent)
@@ -74,6 +75,16 @@ const QString TrackerFilter::getFilterText()
 
 void TrackerFilter::newTrackedEntry()
 {
+  if (fieldEditor->isModified())
+  {
+    if (QMessageBox::question(nullptr,
+                              "Entry has changed",
+                              "The entry has been modified.  Do you want "
+                              "to continue to a new entry?") == QMessageBox::No)
+    {
+      return;
+    }
+  }
   fieldEditor->setTrackedEntry(tracker->newTrackedEntry());
 }
 
