@@ -17,9 +17,9 @@
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QMessageBox>
 #include "entry.h"
 #include "filter.h"
-#include <stdio.h>
 
 EntryField::EntryField(QWidget *parent) : QWidget(parent)
 {
@@ -128,6 +128,13 @@ void EntryField::deleteTrackedEntry()
 
 void EntryField::saveTrackedEntry()
 {
+  if (title->text() == "")
+  {
+    QMessageBox::information(nullptr,
+                             "No Title",
+                             "You must provide a title before saving.");
+    return;
+  }
   entry->setName(title->text());
   entry->setNote(notes->text());
   //entry->setDate(QDate::fromString(date->text()));
